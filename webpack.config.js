@@ -1,95 +1,64 @@
-const {
-  resolve
-} = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const url = require('url')
-const publicPath = ''
+var path = require('path')
+var webpack = require('webpack')
 
-module.exports = (options = {}) => ({
-  entry: {
-    vendor: './src/vendor',
-    index: './src/main.js'
-  },
+module.exports = {
+  entry: './src/main.js',
   output: {
-    path: resolve(__dirname, 'dist'),
-    filename: options.dev ? '[name].js' : '[name].js?[chunkhash]',
-    chunkFilename: '[id].js?[chunkhash]',
-    publicPath: options.dev ? '/assets/' : publicPath
+    path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist/',
+    filename: 'build.js'
   },
+  /*resolveLoader: {
+    root: path.join(__dirname, 'node_modules'),
+  },*/
   module: {
-    rules: [{
+    loaders: [
+      {
         test: /\.vue$/,
-        use: ['vue-loader']
+        loader: 'vue-loader'
       },
       {
         test: /\.js$/,
-        use: ['babel-loader'],
+        loader: 'babel-loader',
         exclude: /node_modules/
       },
       {
-        test: /\.html$/,
-        use: [{
-          loader: 'html-loader',
-          options: {
-            root: resolve(__dirname, 'src'),
-            attrs: ['img:src', 'link:href']
-          }
-        }]
-      },
-      {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
+        loader: 'style-loader!css-loader'
       },
       {
-        test: /favicon\.png$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]?[hash]'
-          }
-        }]
+        test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
+        loader: 'file-loader'
       },
       {
-        test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
-        exclude: /favicon\.png$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 10000
-          }
-        }]
+        test: /\.(png|jpe?g|gif|svg)(\?\S*)?$/,
+        loader: 'file-loader',
+        query: {
+          name: '[name].[ext]?[hash]'
+        }
       }
     ]
   },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest']
-    }),
-    new HtmlWebpackPlugin({
-      template: 'src/index.html'
-    })
-  ],
-  resolve: {
-    alias: {
-      '~': resolve(__dirname, 'src')
-    }
-  },
   devServer: {
-    host: '127.0.0.1',
-    port: 8010,
-    proxy: {
-      '/api/': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
-      }
-    },
-    historyApiFallback: {
-      index: url.parse(options.dev ? '/assets/' : publicPath).pathname
-    }
+    historyApiFallback: true,
+    noInfo: true
   },
-  devtool: options.dev ? '#eval-source-map' : '#source-map'
-})
+  devtool: '#eval-source-map'
+}
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports.devtool = '#source-map'
+  // http://vue-loader.vuejs.org/en/workflow/production.html
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    })
+  ])
+}
