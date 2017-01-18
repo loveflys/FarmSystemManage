@@ -1,30 +1,17 @@
 <template>
-<el-row class="tac">
-  <el-col :span="8">
-    <h5>不带 icon</h5>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark">
-      <el-submenu index="1">
-        <template slot="title">导航一</template>
-        <el-menu-item-group title="分组一">
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="1-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="1-4-1">选项1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-menu-item index="2">导航二</el-menu-item>
-      <el-menu-item index="3">导航三</el-menu-item>
-    </el-menu>
-  </el-col>
-</el-row>
+  <el-tabs v-model="activeName" @tab-click="handleClick">
+  <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+  <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+  <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+  <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
 </template>
 <script>
   export default {
+    route: {
+      data (transition) {
+        this.$parent.selected = '1-3';
+      }
+    },
     methods: {
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
