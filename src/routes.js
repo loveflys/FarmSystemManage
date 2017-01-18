@@ -4,6 +4,8 @@ import UserHome from './components/container/userHome.vue'
 import Platform from './components/asideContainer/platform.vue'
 import UserList from './components/platform/userList.vue'
 import UserCreate from './components/platform/userCreate.vue'
+import ClassList from './components/class/classList.vue'
+import ClassCreate from './components/class/classCreate.vue'
 import Product from './components/asideContainer/product.vue'
 import ProductList from './components/product/list.vue'
 import ProductBrand from './components/product/brand.vue'
@@ -25,6 +27,14 @@ export default [
       {
         path: 'userHome',
         component: UserHome
+      },
+      {
+        path: 'classList',
+        component: ClassList
+      },
+      {
+        path: 'classCreate',
+        component: ClassCreate
       },
       {
         path: 'platform',
