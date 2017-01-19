@@ -1,0 +1,5 @@
+module.exports = {
+  red: 1,
+  green: 2,
+  yellow: 3
+}
