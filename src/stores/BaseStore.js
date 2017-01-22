@@ -1,19 +1,13 @@
 import config from '../config.js';
 import Vue from 'Vue';
 import VueResource from 'vue-resource';
-import cookie from 'src/common/cookie';
+import cookie from '../../src/common/cookie';
 Vue.use(VueResource);
 Vue.http.options.emulateJSON = true;
 
 module.exports = {
   ajax(method, options) {
-    const debugInfo = config.DEBUGAPI[options.apiName];
-    let path = "";
-    if (debugInfo && debugInfo.toUpperCase().indexOf(method.toUpperCase()) > -1) {
-      path = config.DEBUG_PATH;
-    } else {
-      path = config.SERVER_PATH;
-    }
+    let path = config.SERVER_PATH;
     for (let item in options.params) {
       if (typeof(options.params[item]) === "object") {
         options.params[item] = JSON.stringify(options.params[item]);
@@ -27,11 +21,11 @@ module.exports = {
   },
 };
 
-Vue.http.interceptors.push((request, next) => {
-  request["Content-Type"] = "application/x-www-form-urlencoded;charset=utf-8";
-  next((response) => {
-    if(response.body.code == '060') {
-      alert("您的账号在异地登录。");
-    }
-  });
-});
+// Vue.http.interceptors.push((request, next) => {
+//   request["Content-Type"] = "application/x-www-form-urlencoded;charset=utf-8";
+//   next((response) => {
+//     if(response.body.code == '060') {
+//       alert("您的账号在异地登录。");
+//     }
+//   });
+// });
