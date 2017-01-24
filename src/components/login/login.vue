@@ -52,7 +52,19 @@ export default {
     onLogin(event) {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.$router.push('page/userHome');
+          //登陆方法
+          let pwd = this.aes(this.loginForm.password)+"";
+
+          let ciphertext = this.aes(pwd+"*"+this.loginForm.username)+"";
+
+          this.$http.post('http://localhost:8282/api/manager/login',{
+            ciphertext: ciphertext
+          }).then((res) => {
+            this.$router.push('page/userHome');
+            console.log(JSON.stringify(res));
+          }, (err) => {
+            console.log(err.message);
+          });
         } else {
           console.log('error submit!!');
           return false;
@@ -61,6 +73,20 @@ export default {
     },
     handleReset() {
       this.$refs.loginForm.resetFields();
+    },
+    aes (data) {
+      let crypto = require('crypto');
+      let algorithm = 'aes-128-cbc';
+      let key = 'asdqwe21e23896cd';
+      let clearEncoding = 'utf8';
+      let iv = "18669704568cay88";
+      let cipherEncoding = 'base64';
+      let cipher = crypto.createCipheriv(algorithm, key,iv);
+
+      let cipherChunks = [];
+      cipherChunks.push(cipher.update(data, clearEncoding, cipherEncoding));
+      cipherChunks.push(cipher.final(cipherEncoding));
+      return cipherChunks.join('');
     }
   }
 }
